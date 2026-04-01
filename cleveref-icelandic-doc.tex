@@ -4,7 +4,7 @@
 \usepackage[english]{babel}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-\usepackage{is-cref}
+\usepackage{cleveref-icelandic}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -24,7 +24,7 @@
     {→}{{$\rightarrow$}}1
 }
 
-\title{\texttt{is-cref} --- Icelandic declension for cleveref\\
+\title{\texttt{cleveref-icelandic} --- Icelandic declension for cleveref\\
   \large v0.1}
 \author{Sindri Smárason}
 \date{1 April 2026}
@@ -33,7 +33,7 @@
 \maketitle
 
 \begin{abstract}
-  The \texttt{is-cref} package adds Icelandic grammatical declension to
+  The \texttt{cleveref-icelandic} package adds Icelandic grammatical declension to
   cross-references produced by \texttt{cleveref}. It allows references
   to figures, tables, equations, and sections to appear in the correct
   grammatical case --- nominative, accusative, dative, or genitive ---
@@ -53,7 +53,7 @@ nominative case. Icelandic is a heavily inflected language with four
 grammatical cases, and reference nouns such as \textit{mynd} (figure),
 \textit{tafla} (table), \textit{jafna} (equation), and \textit{kafli}
 (section) must be declined according to their grammatical role in the
-sentence. \texttt{is-cref} solves this by storing declension tables for
+sentence. \texttt{cleveref-icelandic} solves this by storing declension tables for
 each reference type and allowing the user to specify the case via a
 simple optional argument.
 
@@ -68,7 +68,7 @@ Icelandic has four cases:
 %%% -----------------------------------------------------------------------
 \section{Requirements and loading}
 
-\texttt{is-cref} automatically loads the following packages:
+\texttt{cleveref-icelandic} automatically loads the following packages:
 
 \begin{itemize}
   \item \texttt{hyperref}
@@ -81,7 +81,7 @@ Load the packages in the following order in your preamble:
 \begin{lstlisting}
 \usepackage[hidelinks]{hyperref}   % or colorlinks=true
 \usepackage{cleveref}
-\usepackage{is-cref}
+\usepackage{cleveref-icelandic}
 \end{lstlisting}
 
 %%% -----------------------------------------------------------------------
@@ -274,7 +274,7 @@ and plural:
 \usepackage[icelandic]{babel}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-\usepackage{is-cref}
+\usepackage{cleveref-icelandic}
 
 \begin{document}
 

@@ -4,7 +4,7 @@
 \usepackage[icelandic]{babel}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-\usepackage{is-cref}
+\usepackage{cleveref-icelandic}
 \usepackage{booktabs}
 \usepackage{listings}
 \usepackage{xcolor}
@@ -24,7 +24,7 @@
     {→}{{$\rightarrow$}}1
 }
 
-\title{\texttt{is-cref} --- Íslensk beyging í krossvísunum\\
+\title{\texttt{cleveref-icelandic} --- Íslensk beyging í krossvísunum\\
   \large v0.1}
 \author{Sindri Smárason}
 \date{1. apríl 2026}
@@ -33,7 +33,7 @@
 \maketitle
 
 \begin{abstract}
-  Pakkinn \texttt{is-cref} bætir við íslenskri beygingu í krossvísunum
+  Pakkinn \texttt{cleveref-icelandic} bætir við íslenskri beygingu í krossvísunum
   sem notaðar eru með \texttt{cleveref}. Með honum er hægt að vísa í
   myndir, töflur, jöfnur og kafla í öllum föllum: nefnifalli, þolfalli,
   þágufalli og eignarfalli, bæði í eintölu og fleirtölu, með sjálfvirkri
@@ -49,14 +49,14 @@
 Pakkinn \texttt{cleveref} er nytsamlegur til krossvísana í LaTeX, en hann
 styður ekki íslensku og getur aðeins framleitt nefnifall. Í íslensku
 þarf að beygja heiti tilvísunar (s.d. mynd, tafla, jafna, kafli) í samræmi
-við setningafræðilegt samhengi. \texttt{is-cref} leysir þetta vandamál
+við setningafræðilegt samhengi. \texttt{cleveref-icelandic} leysir þetta vandamál
 með því að geyma beygingartöflur fyrir hvert tilvísunarflokkur og leyfa
 notandanum að tilgreina fall með einfaldri valkvæðri frástöðu.
 
 %%% -----------------------------------------------------------------------
 \section{Kröfur og hleðsla}
 
-\texttt{is-cref} krefst eftirfarandi pakka, sem hlaðast sjálfkrafa:
+\texttt{cleveref-icelandic} krefst eftirfarandi pakka, sem hlaðast sjálfkrafa:
 
 \begin{itemize}
   \item \texttt{hyperref}
@@ -69,7 +69,7 @@ Pakkinn verður að hlaðast í réttri röð í formálanum:
 \begin{lstlisting}
 \usepackage[hidelinks]{hyperref}   % einnig colorlinks=true
 \usepackage{cleveref}
-\usepackage{is-cref}
+\usepackage{cleveref-icelandic}
 \end{lstlisting}
 
 %%% -----------------------------------------------------------------------
@@ -253,7 +253,7 @@ og í fleirtölu:
 \usepackage[icelandic]{babel}
 \usepackage[hidelinks]{hyperref}
 \usepackage{cleveref}
-\usepackage{is-cref}
+\usepackage{cleveref-icelandic}
 
 \begin{document}
 

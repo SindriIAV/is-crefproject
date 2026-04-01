@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}[1999/12/01]
-\ProvidesPackage{is-cref}[2026/04/01 v0.1 Icelandic declension for cleveref]
-%% is-cref.sty
+\ProvidesPackage{cleveref-icelandic}[2026/04/01 v0.1 Icelandic declension for cleveref]
+%% cleveref-icelandic.sty
 %% Copyright 2026 Sindri Smárason
 %
 % This work may be distributed and/or modified under the
@@ -15,10 +15,9 @@
 %
 % The Current Maintainer of this work is Sindri Smárason.
 %
-% This work consists of the file is-cref.sty
-% and the documentation files is-cref-doc-en.tex,
-%                               is-cref-doc-is.tex,
-%                               is-cref.pdf.
+% This work consists of the file cleveref-icelandic.sty
+% and the documentation files cleveref-icelandic-doc-en.tex,
+% cleveref-icelandic-doc-is.tex, cleveref-icelandic.pdf.
 \RequirePackage{hyperref}
 \RequirePackage{cleveref}
 \RequirePackage{xparse}
@@ -138,7 +137,7 @@
     \def\iscref@prep{#1~}%
     \edef\iscref@case{\csname iscref@prep@#1\endcsname}%
   \else
-    \PackageWarning{is-cref}{Unknown case or preposition: #1, defaulting to nominative}%
+    \PackageWarning{cleveref-icelandic}{Unknown case or preposition: #1, defaulting to nominative}%
     \def\iscref@case{nom}%
   \fi
   \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
@@ -173,7 +172,7 @@
     \csname iscref@\iscref@type @\iscref@case @\iscref@number\endcsname
     ~\labelcref{#1}%
   \else
-    \PackageWarning{is-cref}{No declension defined for type
+    \PackageWarning{cleveref-icelandic}{No declension defined for type
       '\iscref@type' case '\iscref@case' — falling back to \cref}%
     \cref{#1}%
   \fi
@@ -200,7 +199,7 @@
     \csname iscref@\iscref@type @cap@\iscref@case @\iscref@number\endcsname
     ~\labelcref{#2}%
   \else
-    \PackageWarning{is-cref}{No capital declension defined for type
+    \PackageWarning{cleveref-icelandic}{No capital declension defined for type
       '\iscref@type' — falling back to \Cref}%
     \Cref{#2}%
   \fi
