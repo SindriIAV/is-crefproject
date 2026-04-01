@@ -1,0 +1,280 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[icelandic]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{is-cref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  language=[LaTeX]TeX,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  breaklines=true,
+  frame=single,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ý}{{\'y}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ý}{{\'Y}}1
+    {ð}{{\dh}}1 {Ð}{{\DH}}1 {þ}{{\th}}1 {Þ}{{\TH}}1
+    {ö}{{\"o}}1 {Ö}{{\"O}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1
+    {→}{{$\rightarrow$}}1
+}
+
+\title{\texttt{is-cref} --- Íslensk beyging í krossvísunum\\
+  \large v0.1}
+\author{Sindri Smárason}
+\date{1. apríl 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  Pakkinn \texttt{is-cref} bætir við íslenskri beygingu í krossvísunum
+  sem notaðar eru með \texttt{cleveref}. Með honum er hægt að vísa í
+  myndir, töflur, jöfnur og kafla í öllum föllum: nefnifalli, þolfalli,
+  þágufalli og eignarfalli, bæði í eintölu og fleirtölu, með sjálfvirkri
+  tengingu á helstu forsetningar.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%%% -----------------------------------------------------------------------
+\section{Inngangur}
+
+Pakkinn \texttt{cleveref} er nytsamlegur til krossvísana í LaTeX, en hann
+styður ekki íslensku og getur aðeins framleitt nefnifall. Í íslensku
+þarf að beygja heiti tilvísunar (s.d. mynd, tafla, jafna, kafli) í samræmi
+við setningafræðilegt samhengi. \texttt{is-cref} leysir þetta vandamál
+með því að geyma beygingartöflur fyrir hvert tilvísunarflokkur og leyfa
+notandanum að tilgreina fall með einfaldri valkvæðri frástöðu.
+
+%%% -----------------------------------------------------------------------
+\section{Kröfur og hleðsla}
+
+\texttt{is-cref} krefst eftirfarandi pakka, sem hlaðast sjálfkrafa:
+
+\begin{itemize}
+  \item \texttt{hyperref}
+  \item \texttt{cleveref}
+  \item \texttt{xparse}
+\end{itemize}
+
+Pakkinn verður að hlaðast í réttri röð í formálanum:
+
+\begin{lstlisting}
+\usepackage[hidelinks]{hyperref}   % einnig colorlinks=true
+\usepackage{cleveref}
+\usepackage{is-cref}
+\end{lstlisting}
+
+%%% -----------------------------------------------------------------------
+\section{Aðalskipanir}
+
+\subsection{\texttt{\textbackslash icref}}
+
+\begin{lstlisting}
+\icref[<fall>]{<merki>}
+\end{lstlisting}
+
+Framleiðir beygt heiti tilvísunar ásamt númerinu, með tengingu á
+númerið. Valkvæða frumbreytan \texttt{<fall>} getur verið:
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  Inntak & Fall & Dæmi \\
+  \midrule
+  (ekkert) & nefnifall & \verb|\icref{fig:a}| \\
+  \texttt{nom} eða \texttt{nf} eða \texttt{0} & nefnifall & \verb|\icref[nom]{fig:a}| \\
+  \texttt{acc} eða \texttt{þf} eða \texttt{1} & þolfall & \verb|\icref[acc]{fig:a}| \\
+  \texttt{dat} eða \texttt{þgf} eða \texttt{2} & þágufall & \verb|\icref[dat]{fig:a}| \\
+  \texttt{gen} eða \texttt{ef} eða \texttt{3} & eignarfall & \verb|\icref[gen]{fig:a}| \\
+  forsetning & sjálfvirkt fall & \verb|\icref[í]{fig:a}| \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+Þegar forsetning er gefin upp framleiðir skipunin forsetninguna sjálfa
+ásamt beygtri tilvísun:
+
+\begin{lstlisting}
+\icref[í]{fig:a}      % → í mynd 1
+\icref[vegna]{fig:a}  % → vegna myndar 1
+\icref[um]{eq:a}      % → um jöfnu (1)
+\end{lstlisting}
+
+\subsection{\texttt{\textbackslash Icref}}
+
+\begin{lstlisting}
+\Icref[<fall>]{<merki>}
+\end{lstlisting}
+
+Eins og \verb|\icref| en með stórum staf. Notað í upphafi setningar.
+
+\begin{lstlisting}
+\Icref{fig:a}         % → Mynd 1
+\Icref[dat]{fig:a}    % → Mynd 1
+\end{lstlisting}
+
+\subsection{Fleirtala}
+
+Bæði \verb|\icref| og \verb|\Icref| meðhöndla fleirtölu sjálfkrafa þegar
+fleiri en ein vísun er tekin fram:
+
+\begin{lstlisting}
+\icref{fig:a,fig:b}        % → myndir 1 og 2
+\icref[dat]{fig:a,fig:b}   % → myndum 1 og 2
+\end{lstlisting}
+
+Númeraraðir eru þjappaðar niður sjálfkrafa:
+
+\begin{lstlisting}
+\icref{eq:a,eq:b,eq:c}     % → jöfnur (1) til (3)
+\end{lstlisting}
+
+%%% -----------------------------------------------------------------------
+\section{Skilgreining á tilvísunarflokkum}
+
+\subsection{\texttt{\textbackslash DeclareIcrefType}}
+
+\begin{lstlisting}
+\DeclareIcrefType{<flokkur>}
+  {nef et}{þol et}{þag et}{eig et}
+  {nef ft}{þol ft}{þag ft}{eig ft}
+\end{lstlisting}
+
+Skilgreinir beygingarformin fyrir tilvísunarflokk. \texttt{<flokkur>}
+er innra heiti cleveref — \texttt{figure}, \texttt{table},
+\texttt{equation}, \texttt{section} o.s.frv.
+
+\begin{lstlisting}
+\DeclareIcrefType{figure}
+  {mynd}{mynd}{mynd}{myndar}
+  {myndir}{myndir}{myndum}{mynda}
+\end{lstlisting}
+
+\subsection{\texttt{\textbackslash DeclareIcrefTypeCapital}}
+
+Eins og \verb|\DeclareIcrefType| en skilgreinir form með stórum staf
+fyrir \verb|\Icref|:
+
+\begin{lstlisting}
+\DeclareIcrefTypeCapital{figure}
+  {Mynd}{Mynd}{Mynd}{Myndar}
+  {Myndir}{Myndir}{Myndum}{Mynda}
+\end{lstlisting}
+
+%%% -----------------------------------------------------------------------
+\section{Forsetningartafla}
+
+\subsection{\texttt{\textbackslash DeclareIscrefPreposition}}
+
+Notendur geta bætt við eða breytt forsetningum:
+
+\begin{lstlisting}
+\DeclareIscrefPreposition{<forsetning>}{<fall>}
+\end{lstlisting}
+
+Þar sem \texttt{<fall>} er \texttt{acc}, \texttt{dat} eða \texttt{gen}.
+Til dæmis, til að breyta fallvísun \texttt{á} yfir í þolfall úr þágufalli:
+
+\begin{lstlisting}
+\DeclareIscrefPreposition{á}{acc}
+\end{lstlisting}
+
+\subsection{Innbyggðar forsetningar}
+
+Eftirfarandi forsetningar eru innbyggðar í pakkann:
+
+\begin{center}
+\begin{tabular}{ll}
+  \toprule
+  Fall & Forsetningar \\
+  \midrule
+  Þolfall & um, gegnum, kringum, umfram, umhverfis \\
+  \midrule
+  Þágufall & frá, að, af, andspænis, ásamt, gagnvart, gegn, gegnt, \\
+            & handa, hjá, meðfram, nálægt, undan, úr, \\
+            & [á, í, fyrir, undir, yfir, við, með, eftir]$^*$ \\
+  \midrule
+  Eignarfall & til, auk, austan, án, handan, innan, meðal, megin, \\
+             & milli, millum, neðan, norðan, ofan, sakir, sunnan, \\
+             & sökum, utan, vegna, vestan \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent$^*$ Þessar forsetningar geta stýrt þolfalli eða þágufalli eftir
+samhengi (hreyfing vs.\ kyrrstöður). Í tæknilegum skjölum er þágufall
+sjálfgefið eftir bestu þekkingu höfundar.. Notendur geta
+breytt þessu með \verb|\DeclareIscrefPreposition|.
+
+%%% -----------------------------------------------------------------------
+\section{Innbyggðir tilvísunarflokkar}
+Eftirfarandi flokkar eru innbyggðir með fullum beygingartöflum í eintölu:
+
+\begin{center}
+\begin{tabular}{lllll}
+  \toprule
+  Flokkur & Nf. & Þf. & Þgf. & Ef. \\
+  \midrule
+  \texttt{figure}   & mynd  & mynd  & mynd  & myndar \\
+  \texttt{table}    & tafla & töflu & töflu & töflu  \\
+  \texttt{equation} & jafna & jöfnu & jöfnu & jöfnu  \\
+  \texttt{section}  & kafli & kafla & kafla & kafla  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\newpage
+og í fleirtölu:
+\begin{center}
+\begin{tabular}{lllll}
+  \toprule
+  Flokkur & Nf. & Þf. & Þgf. & Ef. \\
+  \midrule
+  \texttt{figure}   & myndir & myndir & myndum & mynda  \\
+  \texttt{table}    & töflur & töflur & töflum & taflna \\
+  \texttt{equation} & jöfnur & jöfnur & jöfnum & jafna  \\
+  \texttt{section}  & kaflar & kafla  & köflum & kafla  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+%%% -----------------------------------------------------------------------
+\section{Heildardæmi}
+
+\begin{lstlisting}
+\documentclass{article}
+\usepackage[icelandic]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{is-cref}
+
+\begin{document}
+
+\begin{figure}
+  \caption{Yfirlit}
+  \label{fig:yfirlit}
+\end{figure}
+
+Niðurstöður eru sýndar í \icref{fig:yfirlit}.
+Fjallað er um \icref[acc]{fig:yfirlit} í næsta kafla.
+Sjá má frekari upplýsingar \icref[í]{fig:yfirlit}.
+\Icref{fig:yfirlit} sýnir samantekt á gögnum.
+
+\end{document}
+\end{lstlisting}
+
+
+%%% -----------------------------------------------------------------------
+\section{Þakkir}
+
+Pakkinn byggir á \texttt{cleveref} eftir Toby Cubitt. Hönnun
+forsetningakerfisins var innblásið af \texttt{crefthe} og \texttt{xcref}.
+
+\end{document}

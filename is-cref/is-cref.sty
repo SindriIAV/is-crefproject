@@ -1,0 +1,245 @@
+\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+\ProvidesPackage{is-cref}[2026/04/01 v0.1 Icelandic declension for cleveref]
+%% is-cref.sty
+%% Copyright 2026 Sindri Smárason
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   https://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2008 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Sindri Smárason.
+%
+% This work consists of the file is-cref.sty
+% and the documentation files is-cref-doc-en.tex,
+%                               is-cref-doc-is.tex,
+%                               is-cref.pdf.
+\RequirePackage{hyperref}
+\RequirePackage{cleveref}
+\RequirePackage{xparse}
+%%% --------------------------------------------------------------------------
+%%% 1. TYPE DECLARATIONS
+%%% --------------------------------------------------------------------------
+\newcommand{\DeclareIcrefType}[9]{%
+  \expandafter\def\csname iscref@#1@nom@sg\endcsname{#2}%
+  \expandafter\def\csname iscref@#1@acc@sg\endcsname{#3}%
+  \expandafter\def\csname iscref@#1@dat@sg\endcsname{#4}%
+  \expandafter\def\csname iscref@#1@gen@sg\endcsname{#5}%
+  \expandafter\def\csname iscref@#1@nom@pl\endcsname{#6}%
+  \expandafter\def\csname iscref@#1@acc@pl\endcsname{#7}%
+  \expandafter\def\csname iscref@#1@dat@pl\endcsname{#8}%
+  \expandafter\def\csname iscref@#1@gen@pl\endcsname{#9}%
+}
+
+\newcommand{\DeclareIcrefTypeCapital}[9]{%
+  \expandafter\def\csname iscref@#1@cap@nom@sg\endcsname{#2}%
+  \expandafter\def\csname iscref@#1@cap@acc@sg\endcsname{#3}%
+  \expandafter\def\csname iscref@#1@cap@dat@sg\endcsname{#4}%
+  \expandafter\def\csname iscref@#1@cap@gen@sg\endcsname{#5}%
+  \expandafter\def\csname iscref@#1@cap@nom@pl\endcsname{#6}%
+  \expandafter\def\csname iscref@#1@cap@acc@pl\endcsname{#7}%
+  \expandafter\def\csname iscref@#1@cap@dat@pl\endcsname{#8}%
+  \expandafter\def\csname iscref@#1@cap@gen@pl\endcsname{#9}%
+}
+
+%%% --------------------------------------------------------------------------
+%%% 2. CONJUNCTIONS AND PREPOSITION TABLE
+%%% --------------------------------------------------------------------------
+\AtBeginDocument{%
+  \renewcommand{\crefrangeconjunction}{ til }%
+  \renewcommand{\crefpairconjunction}{ og }%
+  \renewcommand{\crefmiddleconjunction}{, }%
+  \renewcommand{\creflastconjunction}{ og }%
+}
+\newcommand{\DeclareIscrefPreposition}[2]{%
+  \expandafter\def\csname iscref@prep@#1\endcsname{#2}%
+}
+% Þolfall — accusative
+\DeclareIscrefPreposition{um}{acc}
+\DeclareIscrefPreposition{gegnum}{acc}
+\DeclareIscrefPreposition{kringum}{acc}
+\DeclareIscrefPreposition{umfram}{acc}
+\DeclareIscrefPreposition{umhverfis}{acc}
+
+% Þágufall — dative
+\DeclareIscrefPreposition{frá}{dat}
+\DeclareIscrefPreposition{að}{dat}
+\DeclareIscrefPreposition{af}{dat}
+\DeclareIscrefPreposition{andspænis}{dat}
+\DeclareIscrefPreposition{ásamt}{dat}
+\DeclareIscrefPreposition{gagnvart}{dat}
+\DeclareIscrefPreposition{gegn}{dat}
+\DeclareIscrefPreposition{gegnt}{dat}
+\DeclareIscrefPreposition{handa}{dat}
+\DeclareIscrefPreposition{hjá}{dat}
+\DeclareIscrefPreposition{meðfram}{dat}
+\DeclareIscrefPreposition{nálægt}{dat}
+\DeclareIscrefPreposition{undan}{dat}
+\DeclareIscrefPreposition{úr}{dat}
+% Þolfall/þágufall — defaults to þágufall (dative) but can be superceded
+\DeclareIscrefPreposition{á}{dat}
+\DeclareIscrefPreposition{í}{dat}
+\DeclareIscrefPreposition{fyrir}{dat}
+\DeclareIscrefPreposition{undir}{dat}
+\DeclareIscrefPreposition{yfir}{dat}
+\DeclareIscrefPreposition{við}{dat}
+\DeclareIscrefPreposition{með}{dat}
+\DeclareIscrefPreposition{eftir}{dat}
+
+% Eignarfall — genitive
+\DeclareIscrefPreposition{til}{gen}
+\DeclareIscrefPreposition{auk}{gen}
+\DeclareIscrefPreposition{austan}{gen}
+\DeclareIscrefPreposition{án}{gen}
+\DeclareIscrefPreposition{handan}{gen}
+\DeclareIscrefPreposition{innan}{gen}
+\DeclareIscrefPreposition{meðal}{gen}
+\DeclareIscrefPreposition{megin}{gen}
+\DeclareIscrefPreposition{milli}{gen}
+\DeclareIscrefPreposition{millum}{gen}
+\DeclareIscrefPreposition{neðan}{gen}
+\DeclareIscrefPreposition{norðan}{gen}
+\DeclareIscrefPreposition{ofan}{gen}
+\DeclareIscrefPreposition{sakir}{gen}
+\DeclareIscrefPreposition{sunnan}{gen}
+\DeclareIscrefPreposition{sökum}{gen}
+\DeclareIscrefPreposition{utan}{gen}
+\DeclareIscrefPreposition{vegna}{gen}
+\DeclareIscrefPreposition{vestan}{gen}
+%%% --------------------------------------------------------------------------
+%%% 3. ARGUMENT PARSER
+%%% --------------------------------------------------------------------------
+% \iscref@case    — resolved case: nom, acc, dat, gen
+% \iscref@prep    — preposition to prepend, or empty
+\def\iscref@parse#1{%
+  \def\iscref@prep{}%
+  \def\iscref@case{nom}%
+  % Test if argument is a known named case or preposition first
+  \def\iscref@tempa{#1}%
+  \def\iscref@tempA{nom}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{nom}\else
+  \def\iscref@tempA{acc}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{acc}\else
+  \def\iscref@tempA{dat}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{dat}\else
+  \def\iscref@tempA{gen}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{gen}\else
+  \def\iscref@tempA{nf}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{nom}\else
+  \def\iscref@tempA{þf}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{acc}\else
+  \def\iscref@tempA{þgf}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{dat}\else
+  \def\iscref@tempA{ef}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{gen}\else
+  \def\iscref@tempA{0}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{nom}\else
+  \def\iscref@tempA{1}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{acc}\else
+  \def\iscref@tempA{2}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{dat}\else
+  \def\iscref@tempA{3}\ifx\iscref@tempa\iscref@tempA\def\iscref@case{gen}\else
+  % Must be a preposition — look it up
+  \expandafter\ifcsname iscref@prep@#1\endcsname
+    \def\iscref@prep{#1~}%
+    \edef\iscref@case{\csname iscref@prep@#1\endcsname}%
+  \else
+    \PackageWarning{is-cref}{Unknown case or preposition: #1, defaulting to nominative}%
+    \def\iscref@case{nom}%
+  \fi
+  \fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi\fi
+}
+%%% --------------------------------------------------------------------------
+%%% 4. PLURAL DETECTION
+%%% --------------------------------------------------------------------------
+\def\iscref@countcommas#1{%
+  \def\iscref@number{sg}%
+  \iscref@scancommas#1,\iscref@nil
+}
+
+\def\iscref@scancommas#1,#2\iscref@nil{%
+  \def\iscref@temp{#2}%
+  \def\iscref@empty{}%
+  \ifx\iscref@temp\iscref@empty
+    \def\iscref@number{sg}%
+  \else
+    \def\iscref@number{pl}%
+  \fi
+}
+%%% --------------------------------------------------------------------------
+%%% 5. MAIN COMMANDS
+%%% --------------------------------------------------------------------------
+% Internal: emit the reference given resolved type, case, number
+\def\iscref@emit#1{%
+  % #1 = full label list
+  \iscref@getfirstlabel{#1}{\iscref@firstlabel}%
+  \cref@gettype{\iscref@firstlabel}{\iscref@type}%
+  \expandafter\ifcsname iscref@\iscref@type @\iscref@case @\iscref@number\endcsname
+    \iscref@prep
+    \csname iscref@\iscref@type @\iscref@case @\iscref@number\endcsname
+    ~\labelcref{#1}%
+  \else
+    \PackageWarning{is-cref}{No declension defined for type
+      '\iscref@type' case '\iscref@case' — falling back to \cref}%
+    \cref{#1}%
+  \fi
+}
+\def\iscref@getfirstlabel#1#2{%
+  \iscref@firstlabelscan#1,\iscref@nil{#2}%
+}
+\def\iscref@firstlabelscan#1,#2\iscref@nil#3{%
+  \def#3{#1}%
+}
+\NewDocumentCommand{\icref}{O{nom} m}{%
+  \iscref@parse{#1}%
+  \iscref@countcommas{#2}%
+  \iscref@emit{#2}%
+}
+
+\NewDocumentCommand{\Icref}{O{nom} m}{%
+  \iscref@parse{#1}%
+  \iscref@countcommas{#2}%
+  \iscref@getfirstlabel{#2}{\iscref@firstlabel}%
+  \cref@gettype{\iscref@firstlabel}{\iscref@type}%
+  \expandafter\ifcsname iscref@\iscref@type @cap@\iscref@case @\iscref@number\endcsname
+    \iscref@prep
+    \csname iscref@\iscref@type @cap@\iscref@case @\iscref@number\endcsname
+    ~\labelcref{#2}%
+  \else
+    \PackageWarning{is-cref}{No capital declension defined for type
+      '\iscref@type' — falling back to \Cref}%
+    \Cref{#2}%
+  \fi
+}
+%%% --------------------------------------------------------------------------
+%%% 6. BUILT-IN ICELANDIC DECLARATIONS
+%%% --------------------------------------------------------------------------
+% Syntax: \DeclareIcrefType{type}
+%   {nom sg}{acc sg}{dat sg}{gen sg}
+%   {nom pl}{acc pl}{dat pl}{gen pl}
+
+% figure / mynd (f.)
+\DeclareIcrefType{figure}
+  {mynd}{mynd}{mynd}{myndar}
+  {myndir}{myndir}{myndum}{mynda}
+\DeclareIcrefTypeCapital{figure}
+  {Mynd}{Mynd}{Mynd}{Myndar}
+  {Myndir}{Myndir}{Myndum}{Mynda}
+
+% table / tafla (f.)
+\DeclareIcrefType{table}
+  {tafla}{töflu}{töflu}{töflu}
+  {töflur}{töflur}{töflum}{taflna}
+\DeclareIcrefTypeCapital{table}
+  {Tafla}{Töflu}{Töflu}{Töflu}
+  {Töflur}{Töflur}{Töflum}{Taflna}
+
+% equation / jafna (f.)
+\DeclareIcrefType{equation}
+  {jafna}{jöfnu}{jöfnu}{jöfnu}
+  {jöfnur}{jöfnur}{jöfnum}{jafna}
+\DeclareIcrefTypeCapital{equation}
+  {Jafna}{Jöfnu}{Jöfnu}{Jöfnu}
+  {Jöfnur}{Jöfnur}{Jöfnum}{Jafna}
+
+% section / kafli (m.)
+\DeclareIcrefType{section}
+  {kafli}{kafla}{kafla}{kafla}
+  {kaflar}{kafla}{köflum}{kafla}
+\DeclareIcrefTypeCapital{section}
+  {Kafli}{Kafla}{Kafla}{Kafla}
+  {Kaflar}{Kafla}{Köflum}{Kafla}

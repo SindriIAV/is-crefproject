@@ -1,0 +1,300 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{is-cref}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{
+  language=[LaTeX]TeX,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  breaklines=true,
+  frame=single,
+  literate=
+    {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1 {ý}{{\'y}}1
+    {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1 {Ý}{{\'Y}}1
+    {ð}{{\dh}}1 {Ð}{{\DH}}1 {þ}{{\th}}1 {Þ}{{\TH}}1
+    {ö}{{\"o}}1 {Ö}{{\"O}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1
+    {→}{{$\rightarrow$}}1
+}
+
+\title{\texttt{is-cref} --- Icelandic declension for cleveref\\
+  \large v0.1}
+\author{Sindri Smárason}
+\date{1 April 2026}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+  The \texttt{is-cref} package adds Icelandic grammatical declension to
+  cross-references produced by \texttt{cleveref}. It allows references
+  to figures, tables, equations, and sections to appear in the correct
+  grammatical case --- nominative, accusative, dative, or genitive ---
+  in both singular and plural, with automatic case selection from
+  prepositions.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+%%% -----------------------------------------------------------------------
+\section{Introduction}
+
+The \texttt{cleveref} package automates cross-reference formatting in
+LaTeX but has no Icelandic language support and can only produce the
+nominative case. Icelandic is a heavily inflected language with four
+grammatical cases, and reference nouns such as \textit{mynd} (figure),
+\textit{tafla} (table), \textit{jafna} (equation), and \textit{kafli}
+(section) must be declined according to their grammatical role in the
+sentence. \texttt{is-cref} solves this by storing declension tables for
+each reference type and allowing the user to specify the case via a
+simple optional argument.
+
+Icelandic has four cases:
+\begin{itemize}
+  \item \textbf{Nominative} (\textit{nefnifall}) --- subject position
+  \item \textbf{Accusative} (\textit{þolfall}) --- direct object, some prepositions
+  \item \textbf{Dative} (\textit{þágufall}) --- indirect object, most locative prepositions
+  \item \textbf{Genitive} (\textit{eignarfall}) --- possession, some prepositions
+\end{itemize}
+
+%%% -----------------------------------------------------------------------
+\section{Requirements and loading}
+
+\texttt{is-cref} automatically loads the following packages:
+
+\begin{itemize}
+  \item \texttt{hyperref}
+  \item \texttt{cleveref}
+  \item \texttt{xparse}
+\end{itemize}
+
+Load the packages in the following order in your preamble:
+
+\begin{lstlisting}
+\usepackage[hidelinks]{hyperref}   % or colorlinks=true
+\usepackage{cleveref}
+\usepackage{is-cref}
+\end{lstlisting}
+
+%%% -----------------------------------------------------------------------
+\section{Main commands}
+
+\subsection{\texttt{\textbackslash icref}}
+
+\begin{lstlisting}
+\icref[<case>]{<label>}
+\end{lstlisting}
+
+Produces a declined reference noun followed by the number, with the
+number hyperlinked to its target. The optional \texttt{<case>} argument
+accepts the following inputs:
+
+\begin{center}
+\begin{tabular}{lll}
+  \toprule
+  Input & Case & Example \\
+  \midrule
+  (none)                                       & nominative & \verb|\icref{fig:a}| \\
+  \texttt{nom} or \texttt{nf} or \texttt{0}  & nominative & \verb|\icref[nom]{fig:a}| \\
+  \texttt{acc} or \texttt{þf} or \texttt{1}  & accusative & \verb|\icref[acc]{fig:a}| \\
+  \texttt{dat} or \texttt{þgf} or \texttt{2}  & dative     & \verb|\icref[dat]{fig:a}| \\
+  \texttt{gen} or \texttt{ef} or \texttt{3}  & genitive   & \verb|\icref[gen]{fig:a}| \\
+  preposition                                  & automatic  & \verb|\icref[í]{fig:a}| \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+When a preposition is given, the command outputs the preposition
+followed by the declined noun:
+
+\begin{lstlisting}
+\icref[í]{fig:a}      % → í mynd 1
+\icref[vegna]{fig:a}  % → vegna myndar 1
+\icref[um]{eq:a}      % → um jöfnu (1)
+\end{lstlisting}
+
+If an unrecognised argument is passed, the package issues a warning and
+falls back to the nominative.
+
+\subsection{\texttt{\textbackslash Icref}}
+
+\begin{lstlisting}
+\Icref[<case>]{<label>}
+\end{lstlisting}
+
+Identical to \verb|\icref| but produces a capitalised form for use at
+the start of a sentence:
+
+\begin{lstlisting}
+\Icref{fig:a}       % → Mynd 1
+\Icref[dat]{fig:a}  % → Mynd 1
+\end{lstlisting}
+
+\subsection{Plural references}
+
+Both \verb|\icref| and \verb|\Icref| handle plurals automatically when
+more than one label is given:
+
+\begin{lstlisting}
+\icref{fig:a,fig:b}        % → myndir 1 og 2
+\icref[dat]{fig:a,fig:b}   % → myndum 1 og 2
+\end{lstlisting}
+
+Numerically consecutive labels are compressed automatically:
+
+\begin{lstlisting}
+\icref{eq:a,eq:b,eq:c}     % → jöfnur (1) til (3)
+\end{lstlisting}
+
+%%% -----------------------------------------------------------------------
+\section{Declaring reference types}
+
+\subsection{\texttt{\textbackslash DeclareIcrefType}}
+
+\begin{lstlisting}
+\DeclareIcrefType{<type>}
+  {nom sg}{acc sg}{dat sg}{gen sg}
+  {nom pl}{acc pl}{dat pl}{gen pl}
+\end{lstlisting}
+
+Declares the eight declined forms for a reference type. \texttt{<type>}
+is the internal cleveref counter name --- \texttt{figure},
+\texttt{table}, \texttt{equation}, \texttt{section}, etc.
+
+\begin{lstlisting}
+\DeclareIcrefType{figure}
+  {mynd}{mynd}{mynd}{myndar}
+  {myndir}{myndir}{myndum}{mynda}
+\end{lstlisting}
+
+\subsection{\texttt{\textbackslash DeclareIcrefTypeCapital}}
+
+Identical syntax to \verb|\DeclareIcrefType| but declares the
+capitalised forms used by \verb|\Icref|:
+
+\begin{lstlisting}
+\DeclareIcrefTypeCapital{figure}
+  {Mynd}{Mynd}{Mynd}{Myndar}
+  {Myndir}{Myndir}{Myndum}{Mynda}
+\end{lstlisting}
+
+Both commands should be called together for every custom type. If
+\verb|\DeclareIcrefTypeCapital| is not called, \verb|\Icref| will fall
+back to \verb|\Cref| with a package warning.
+
+%%% -----------------------------------------------------------------------
+\section{Preposition table}
+
+\subsection{\texttt{\textbackslash DeclareIscrefPreposition}}
+
+Users can add new prepositions or override existing ones:
+
+\begin{lstlisting}
+\DeclareIscrefPreposition{<preposition>}{<case>}
+\end{lstlisting}
+
+Where \texttt{<case>} is \texttt{acc}, \texttt{dat}, or \texttt{gen}.
+For example, to override "\texttt{á}" to accusative:
+
+\begin{lstlisting}
+\DeclareIscrefPreposition{á}{acc}
+\end{lstlisting}
+
+\subsection{Built-in prepositions}
+
+\begin{center}
+\begin{tabular}{ll}
+  \toprule
+  Case & Prepositions \\
+  \midrule
+  Accusative & um, gegnum, kringum, umfram, umhverfis \\
+  \midrule
+  Dative & frá, að, af, andspænis, ásamt, gagnvart, gegn, gegnt, \\
+         & handa, hjá, meðfram, nálægt, undan, úr, \\
+         & [á, í, fyrir, undir, yfir, við, með, eftir]$^*$ \\
+  \midrule
+  Genitive & til, auk, austan, án, handan, innan, meðal, megin, \\
+           & milli, millum, neðan, norðan, ofan, sakir, sunnan, \\
+           & sökum, utan, vegna, vestan \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+\noindent$^*$ These prepositions can govern either accusative or dative
+depending on context (motion vs.\ location). Dative is the default as
+locative readings are most common in technical documents. This can be
+overridden with \verb|\DeclareIscrefPreposition|.
+
+%%% -----------------------------------------------------------------------
+\section{Built-in reference types}
+
+The following types are built in with full declension tables, singular:
+
+\begin{center}
+\begin{tabular}{lllll}
+  \toprule
+  Type & Nom. & Acc. & Dat. & Gen. \\
+  \midrule
+  \texttt{figure}   & mynd  & mynd  & mynd  & myndar \\
+  \texttt{table}    & tafla & töflu & töflu & töflu  \\
+  \texttt{equation} & jafna & jöfnu & jöfnu & jöfnu  \\
+  \texttt{section}  & kafli & kafla & kafla & kafla  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+and plural:
+
+\begin{center}
+\begin{tabular}{lllll}
+  \toprule
+  Type & Nom. & Acc. & Dat. & Gen. \\
+  \midrule
+  \texttt{figure}   & myndir & myndir & myndum & mynda  \\
+  \texttt{table}    & töflur & töflur & töflum & taflna \\
+  \texttt{equation} & jöfnur & jöfnur & jöfnum & jafna  \\
+  \texttt{section}  & kaflar & kafla  & köflum & kafla  \\
+  \bottomrule
+\end{tabular}
+\end{center}
+
+%%% -----------------------------------------------------------------------
+\section{Complete example}
+
+\begin{lstlisting}
+\documentclass{article}
+\usepackage[icelandic]{babel}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cleveref}
+\usepackage{is-cref}
+
+\begin{document}
+
+\begin{figure}
+  \caption{Yfirlit}
+  \label{fig:yfirlit}
+\end{figure}
+
+Niðurstöður eru sýndar í \icref{fig:yfirlit}.
+Fjallað er um \icref[acc]{fig:yfirlit} í næsta kafla.
+Sjá má frekari upplýsingar \icref[í]{fig:yfirlit}.
+\Icref{fig:yfirlit} sýnir samantekt á gögnum.
+
+\end{document}
+\end{lstlisting}
+
+%%% -----------------------------------------------------------------------
+\section{Acknowledgements}
+
+This package builds on \texttt{cleveref} by Toby Cubitt. The preposition
+system was inspired by \texttt{crefthe} and \texttt{xcref}.
+
+\end{document}
